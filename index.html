@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>KrizArchives – Question Paper Archive</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+<!-- Header -->
+<header class="bg-slate-900 text-white text-center p-4">
+    <h1 class="text-2xl font-bold">📚 KrizArchives</h1>
+    <p class="text-sm text-gray-300">Question Paper & Exam Archive</p>
+</header>
+
+<!-- Main Container -->
+<div class="max-w-4xl mx-auto p-4">
+
+    <!-- Upload Section -->
+    <div class="bg-white rounded shadow p-4 mb-6">
+        <h2 class="text-xl font-semibold mb-3">Upload Question Paper (PDF)</h2>
+
+        <input id="paperTitle" type="text" placeholder="Paper Title"
+            class="w-full border rounded p-2 mb-2">
+
+        <input id="paperFile" type="file" accept="application/pdf"
+            class="w-full border rounded p-2 mb-2">
+
+        <button onclick="addPaper()"
+            class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+            Add Paper
+        </button>
+    </div>
+
+    <!-- Paper List -->
+    <div class="bg-white rounded shadow p-4">
+        <h2 class="text-xl font-semibold mb-3">Available Papers</h2>
+        <div id="papers" class="space-y-2"></div>
+    </div>
+
+</div>
+
+<!-- PDF Modal -->
+<div id="pdfModal"
+     class="fixed inset-0 bg-black bg-opacity-70 hidden flex items-center justify-center z-50">
+
+    <div class="bg-white w-[90%] h-[90%] rounded relative">
+        <button onclick="closeModal()"
+            class="absolute top-2 right-2 bg-red-600 text-white px-3 py-1 rounded">
+            Close
+        </button>
+
+        <iframe id="pdfViewer" class="w-full h-full rounded"></iframe>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="text-center text-gray-500 text-sm py-4">
+    © 2026 KrizArchives | Built for Students
+</footer>
+
+<script>
+// Sample PDF (Base64 encoded minimal valid PDF)
+const samplePDF =
+`data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFszIDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvTWVkaWFCb3ggWzAgMCA2MTIgNzkyXSAvQ29udGVudHMgNCAwIFIgL1Jlc291cmNlcyA8PCA+PiA+PgplbmRvYmoKNCAwIG9iago8PCAvTGVuZ3RoIDU1ID4+CnN0cmVhbQpCVAovRjEgMTIgVGYKMTAwIDcwMCBUZAooS3JpekFyY2hpdmVzIFNhbXBsZSBRdWVzdGlvbiBQYXBlcikgVGoKRVQKZW5kc3RyZWFtCmVuZG9iagp4cmVmCjAgNQowMDAwMDAwMDAwIDY1NTM1IGYKMDAwMDAwMDAxMCAwMDAwMCBuCjAwMDAwMDAwNjIgMDAwMDAgbgowMDAwMDAwMTIxIDAwMDAwIG4KMDAwMDAwMDIyNyAwMDAwMCBuCnRyYWlsZXIKPDwgL1Jvb3QgMSAwIFIgL1NpemUgNSA+PgpzdGFydHhyZWYKMzAyCiUlRU9G`;
+
+let papers = [
+    {
+        title: "Sample Question Paper – KrizArchives",
+        url: samplePDF
+    }
+];
+
+function renderPapers() {
+    const container = document.getElementById("papers");
+    container.innerHTML = "";
+
+    papers.forEach((paper, index) => {
+        const div = document.createElement("div");
+        div.className = "flex justify-between items-center border-b pb-2";
+
+        div.innerHTML = `
+            <span class="text-gray-800">${paper.title}</span>
+            <button onclick="openPDF(${index})"
+                class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
+                View
+            </button>
+        `;
+        container.appendChild(div);
+    });
+}
+
+function addPaper() {
+    const title = document.getElementById("paperTitle").value.trim();
+    const file = document.getElementById("paperFile").files[0];
+
+    if (!title || !file) {
+        alert("Please enter title and select a PDF file.");
+        return;
+    }
+
+    const url = URL.createObjectURL(file);
+    papers.push({ title, url });
+
+    document.getElementById("paperTitle").value = "";
+    document.getElementById("paperFile").value = "";
+
+    renderPapers();
+}
+
+function openPDF(index) {
+    document.getElementById("pdfViewer").src = papers[index].url;
+    document.getElementById("pdfModal").classList.remove("hidden");
+}
+
+function closeModal() {
+    document.getElementById("pdfViewer").src = "";
+    document.getElementById("pdfModal").classList.add("hidden");
+}
+
+renderPapers();
+</script>
+
+</body>
+</html>
